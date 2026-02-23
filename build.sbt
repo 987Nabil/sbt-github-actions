@@ -16,43 +16,39 @@
 
 name := "sbt-github-actions"
 
-lazy val scala212 = "2.12.15"
-ThisBuild / organization := "com.github.sbt"
+lazy val scala212 = "2.12.20"
+ThisBuild / organization := "com.codecommit"
 ThisBuild / crossScalaVersions := Seq(scala212)
 ThisBuild / scalaVersion := scala212
 
 // Add windows-latest when https://github.com/sbt/sbt/issues/7082 is resolved
-ThisBuild / githubWorkflowOSes := Seq("ubuntu-latest", "macos-latest")
-ThisBuild / githubWorkflowBuild := Seq(WorkflowStep.Sbt(List("test", "scripted")))
-ThisBuild / githubWorkflowJavaVersions :=
-  Seq(
-    JavaSpec.temurin("8"),
-    JavaSpec.graalvm("20.3.1", "11"),
-  )
+// ThisBuild / githubWorkflowOSes := Seq("ubuntu-latest", "macos-latest")
+// ThisBuild / githubWorkflowBuild := Seq(WorkflowStep.Sbt(List("test", "scripted")))
+// ThisBuild / githubWorkflowJavaVersions :=
+//   Seq(
+//     JavaSpec.temurin("8"),
+//     JavaSpec.graalvm("20.3.1", "11"),
+//   )
 
-ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
-ThisBuild / githubWorkflowPublishTargetBranches :=
-  Seq(
-    RefPredicate.StartsWith(Ref.Tag("v")),
-    RefPredicate.Equals(Ref.Branch("main"))
-  )
-ThisBuild / githubWorkflowPublish := Seq(
-  WorkflowStep.Sbt(
-    commands = List("ci-release"),
-    name = Some("Publish project"),
-    env = Map(
-      "PGP_PASSPHRASE" -> "${{ secrets.PGP_PASSPHRASE }}",
-      "PGP_SECRET" -> "${{ secrets.PGP_SECRET }}",
-      "SONATYPE_PASSWORD" -> "${{ secrets.SONATYPE_PASSWORD }}",
-      "SONATYPE_USERNAME" -> "${{ secrets.SONATYPE_USERNAME }}"
-    )
-  )
-)
-ThisBuild / version := {
-  val orig = (ThisBuild / version).value
-  if (orig.endsWith("-SNAPSHOT")) orig.split("""\+""").head + "-SNAPSHOT"
-  else orig
-}
+// ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
+// ThisBuild / githubWorkflowPublishTargetBranches :=
+//   Seq(
+//     RefPredicate.StartsWith(Ref.Tag("v")),
+//     RefPredicate.Equals(Ref.Branch("main"))
+//   )
+// ThisBuild / githubWorkflowPublish := Seq(
+//   WorkflowStep.Sbt(
+//     commands = List("ci-release"),
+//     name = Some("Publish project"),
+//     env = Map(
+//       "PGP_PASSPHRASE" -> "${{ secrets.PGP_PASSPHRASE }}",
+//       "PGP_SECRET" -> "${{ secrets.PGP_SECRET }}",
+//       "SONATYPE_PASSWORD" -> "${{ secrets.SONATYPE_PASSWORD }}",
+//       "SONATYPE_USERNAME" -> "${{ secrets.SONATYPE_USERNAME }}"
+//     )
+//   )
+// )
+ThisBuild / version := "workflow-RC18"
 
 sbtPlugin := true
 pluginCrossBuild / sbtVersion := "1.5.5"
@@ -91,3 +87,14 @@ ThisBuild / publishTo := {
 }
 ThisBuild / publishMavenStyle := true
 Global / excludeLintKeys ++= Set(pomIncludeRepository, publishMavenStyle)
+
+lazy val Artifactory: Resolver =
+  "PI Artifacts" at "artifactregistry://europe-maven.pkg.dev/rd-bdlab-9c32/pi-artifacts"
+
+fullResolvers := Artifactory +: fullResolvers.value
+
+publishTo := Some(Artifactory)
+
+publishMavenStyle := false
+Test / publishArtifact := false
+pomIncludeRepository := (_ => false)

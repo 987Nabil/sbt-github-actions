@@ -44,7 +44,8 @@ final case class WorkflowJob(
     matrixExcs: List[MatrixExclude] = List(),
     runsOnExtraLabels: List[String] = List(),
     container: Option[JobContainer] = None,
-    environment: Option[JobEnvironment] = None) extends WorkflowJobBase {
+    environment: Option[JobEnvironment] = None,
+    outputs: Map[String, String] = Map.empty) extends WorkflowJobBase {
 
   def needsJob(job: WorkflowJob): WorkflowJob =
     copy(needs = needs :+ job.id)

@@ -246,6 +246,8 @@ object GenerativePlugin extends AutoPlugin {
 
     val renderedCond = job.cond.map(wrap).map("\nif: " + _).getOrElse("")
 
+    val renderedOutputs = renderMap(job.outputs, "outputs")
+
     val renderedContainer = job.container match {
       case Some(JobContainer(image, credentials, env, volumes, ports, options)) =>
         if (credentials.isEmpty && env.isEmpty && volumes.isEmpty && ports.isEmpty && options.isEmpty) {
@@ -393,7 +395,7 @@ object GenerativePlugin extends AutoPlugin {
         ""
       }
 
-    val body = s"""name: ${wrap(job.name)}${renderedNeeds}${renderedCond}${renderedStrategy}
+    val body = s"""name: ${wrap(job.name)}${renderedNeeds}${renderedCond}${renderedOutputs}${renderedStrategy}
 runs-on: ${runsOn}${renderedEnvironment}${renderedContainer}${renderedEnv}${renderedPerm}
 $renderedSteps"""
 

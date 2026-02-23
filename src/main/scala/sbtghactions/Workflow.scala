@@ -24,12 +24,13 @@ final case class Workflow(
     jobs: Seq[WorkflowJobBase],
     env: Map[String, String],
     permissions: Option[Permissions],
+    concurrency: Option[Concurrency] = None,
 ) {
 
   def render: String =
     s"""|name: ${wrap(name)}
         |
-        |on:\n$renderOns$renderPermissions$renderEnv""".stripMargin
+        |on:\n$renderOns$renderPermissions$renderConcurrency$renderEnv""".stripMargin
 
   private def renderOns =
     ons.map(_.render).map(indentOnce).mkString("\n")
@@ -37,7 +38,17 @@ final case class Workflow(
   private def renderPermissions =
     permissions.map(_.render).mkString
 
+  private def renderConcurrency: String =
+    concurrency.map { c =>
+      s"""|
+          |concurrency:
+          |  group: ${wrap(c.group)}
+          |  cancel-in-progress: ${c.cancelInProgress}""".stripMargin
+    }.getOrElse("")
+
   private def renderEnv: String =
     renderMap(env, "env")
 
 }
+
+final case class Concurrency(group: String, cancelInProgress: Boolean)
