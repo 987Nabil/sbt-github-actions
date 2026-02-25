@@ -289,6 +289,13 @@ object GenerativePlugin extends AutoPlugin {
 
     val renderedEnv = renderMap(job.env, "env")
     val renderedPerm = job.permissions.map(_.render).mkString
+    
+    val renderedConcurrency = job.concurrency.map { c =>
+      s"""|
+          |concurrency:
+          |  group: ${wrap(c.group)}
+          |  cancel-in-progress: ${c.cancelInProgress}""".stripMargin
+    }.getOrElse("")
 
     List("include", "exclude") foreach { key =>
       if (job.matrixAdds.contains(key)) {
@@ -396,7 +403,7 @@ object GenerativePlugin extends AutoPlugin {
       }
 
     val body = s"""name: ${wrap(job.name)}${renderedNeeds}${renderedCond}${renderedOutputs}${renderedStrategy}
-runs-on: ${runsOn}${renderedEnvironment}${renderedContainer}${renderedEnv}${renderedPerm}
+runs-on: ${runsOn}${renderedEnvironment}${renderedContainer}${renderedEnv}${renderedPerm}${renderedConcurrency}
 $renderedSteps"""
 
     s"${job.id}:\n${indentOnce(body)}"
