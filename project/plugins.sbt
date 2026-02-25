@@ -19,3 +19,4 @@
 val sbtGithubActionsSources = ProjectRef(file("project"), "sbtGithubActionsSources")
 
 addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.5.11")
+addSbtPlugin("org.latestbit"     % "sbt-gcs-plugin"        % "1.6.0")

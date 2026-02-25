@@ -48,7 +48,7 @@ ThisBuild / scalaVersion := scala212
 //     )
 //   )
 // )
-ThisBuild / version := "workflow-RC18"
+ThisBuild / version := "workflow-RC19"
 
 sbtPlugin := true
 pluginCrossBuild / sbtVersion := "1.5.5"
@@ -95,6 +95,6 @@ fullResolvers := Artifactory +: fullResolvers.value
 
 publishTo := Some(Artifactory)
 
-publishMavenStyle := false
+publishMavenStyle := true
 Test / publishArtifact := false
 pomIncludeRepository := (_ => false)
