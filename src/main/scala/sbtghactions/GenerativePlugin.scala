@@ -297,6 +297,8 @@ object GenerativePlugin extends AutoPlugin {
           |  cancel-in-progress: ${c.cancelInProgress}""".stripMargin
     }.getOrElse("")
 
+    val renderedContinueOnError = if (job.continueOnError) "\ncontinue-on-error: true" else ""
+
     List("include", "exclude") foreach { key =>
       if (job.matrixAdds.contains(key)) {
         sys.error(s"key `$key` is reserved and cannot be used in an Actions matrix definition")
@@ -403,7 +405,7 @@ object GenerativePlugin extends AutoPlugin {
       }
 
     val body = s"""name: ${wrap(job.name)}${renderedNeeds}${renderedCond}${renderedOutputs}${renderedStrategy}
-runs-on: ${runsOn}${renderedEnvironment}${renderedContainer}${renderedEnv}${renderedPerm}${renderedConcurrency}
+runs-on: ${runsOn}${renderedEnvironment}${renderedContainer}${renderedEnv}${renderedPerm}${renderedConcurrency}${renderedContinueOnError}
 $renderedSteps"""
 
     s"${job.id}:\n${indentOnce(body)}"

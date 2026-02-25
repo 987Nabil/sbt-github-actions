@@ -48,7 +48,7 @@ ThisBuild / scalaVersion := scala212
 //     )
 //   )
 // )
-ThisBuild / version := "workflow-RC19"
+ThisBuild / version := "workflow-RC20"
 
 sbtPlugin := true
 pluginCrossBuild / sbtVersion := "1.5.5"

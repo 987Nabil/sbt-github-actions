@@ -46,7 +46,8 @@ final case class WorkflowJob(
     container: Option[JobContainer] = None,
     environment: Option[JobEnvironment] = None,
     outputs: Map[String, String] = Map.empty,
-    concurrency: Option[Concurrency] = None) extends WorkflowJobBase {
+     concurrency: Option[Concurrency] = None,
+     continueOnError: Boolean = false) extends WorkflowJobBase {
 
   def needsJob(job: WorkflowJob): WorkflowJob =
     copy(needs = needs :+ job.id)
